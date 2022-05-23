@@ -5,6 +5,7 @@ import json
 from datetime import datetime
 
 NUM_OF_DRONES = 5
+DEVICE_TYPE = "DRONE"
 DEVICE_NAME = "Drone"
 
 mqttBroker ="mqtt.eclipseprojects.io" 
@@ -28,6 +29,7 @@ def to_gps(longtitude: float, latitude: float):
 def to_json_packet(device_id: str, position: str):
     dt = str(datetime.now())
     values_to_parse = {
+        "device_type": DEVICE_TYPE,
         "device_id": device_id,
         "gps_position": position,
         "datetime": dt
