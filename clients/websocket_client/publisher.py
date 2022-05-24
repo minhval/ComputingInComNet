@@ -4,7 +4,7 @@ import time
 import json
 from datetime import datetime
 
-NUM_OF_DRONES = 5
+NUM_OF_DRONES = 10
 DEVICE_TYPE = "DRONE"
 DEVICE_NAME = "DroneNo"
 

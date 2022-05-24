@@ -9,16 +9,30 @@
 
 <body>
     <div id="todaysDate">Time</div>
+    </br>
     <div id="gpsdata">GPS data: n/a</div>
+    <!-- <div id="gps_device_id">GPS device id</div> -->
+    </br>
+    <div>GPS devices list and value</div>
+    <div id="gps_device_array">GPS device array</div>
+    </br>
+    <div>GPS devices list and parsed value</div>
+    <div id="gps_device_parsed_array">GPS device parsed array</div>
+    <!-- <div id="googleMap" style="width:100%;height:400px;"></div> -->
 
-    <!-- sommarive 5:   lat 46.06680624453603, long 11.150220098559688 -->
-    <!-- API key: AIzaSyCctTr_jywGoDllTDvDmOavbjbfmAMz5FI -->
-    <div id="googleMap" style="width:100%;height:400px;"></div>
 
     <script src="js/timer.js"></script>
 
     <!-- for MQTT Socket -->
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
+    <script>
+        // For variables
+        var gpsdata
+        let current_gps_data_array = []
+        let latest_updated_gps_devices = {}
+
+    </script>
     <script>
         BROKER_URL = "ws://test.mosquitto.org:8080"
         SUBSCRIBE_TOPIC = "unitn/compcomp/gps"
@@ -28,11 +42,51 @@
         client.on("message", function (topic, message) {
             document.getElementById("gpsdata").innerHTML = message;
             // client.end()
+
+            current_gps_data_array.push(message) // push object to data array
+
+            gpsdata = JSON.parse(message) // --> print clearly in console
+            console.log(gpsdata)
         })
     </script>
 
-    <!-- for GG Maps -->
     <script>
+        DEVICES_LIST_UPDATE_INTERVAL = 2000
+
+        function updateDevicesList() {
+            while (current_gps_data_array.length != 0) {
+                gps_element = current_gps_data_array.pop() // get last element
+                parsed_gps_element = JSON.parse(gps_element)
+                device_id = parsed_gps_element["device_id"]
+
+                if (!(device_id in latest_updated_gps_devices)) {
+                    latest_updated_gps_devices[device_id] = ""
+                    console.log(device_id + " not in the list")
+                }
+                else {
+                    console.log(device_id + " in the list")
+                }
+                // update value
+                latest_updated_gps_devices[device_id] = parsed_gps_element
+            }
+            // document.getElementById("gps_device_array").innerHTML = typeof (latest_updated_gps_devices) // object
+            // console.log(latest_updated_gps_devices)
+
+        }
+        setInterval(updateDevicesList, DEVICES_LIST_UPDATE_INTERVAL);
+
+        function printDevicesList() {
+            copied_dev_ls = Object.assign({}, latest_updated_gps_devices); // element parsed!
+            document.getElementById("gps_device_array").innerHTML = JSON.stringify(copied_dev_ls);
+        }
+        setInterval(printDevicesList, DEVICES_LIST_UPDATE_INTERVAL);
+
+    </script>
+
+    <!-- for GG Maps -->
+    <!-- sommarive 5:   lat 46.06680624453603, long 11.150220098559688 -->
+    <!-- API key: AIzaSyCctTr_jywGoDllTDvDmOavbjbfmAMz5FI -->
+    <!-- <script>
         function myMap() {
             var mapProp = {
                 center: new google.maps.LatLng(46.06680624453603, 11.150220098559688),
@@ -42,7 +96,8 @@
         }
     </script>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCctTr_jywGoDllTDvDmOavbjbfmAMz5FI&callback=myMap"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCctTr_jywGoDllTDvDmOavbjbfmAMz5FI&callback=myMap">
+    </script> -->
 </body>
 
 </html>
