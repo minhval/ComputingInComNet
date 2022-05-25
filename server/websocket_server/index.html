@@ -9,17 +9,20 @@
 
 <body>
     <div id="todaysDate">Time</div>
-    </br>
+    <iframe id="googleMap"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2768.220592905102!2d11.148031415998743!3d46.066642479112694!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x478276953a10643d%3A0xfe04562a3b76fee5!2sVia%20Sommarive%2C%205%2C%2038123%20Trento%20TN!5e0!3m2!1svi!2sit!4v1653396932682!5m2!1svi!2sit"
+        width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </br></br>
     <div id="gpsdata">GPS data: n/a</div>
     <!-- <div id="gps_device_id">GPS device id</div> -->
     </br>
-    <div>GPS devices list and value</div>
+    <div>GPS devices list and latest value</div>
     <div id="gps_device_array">GPS device array</div>
     </br>
     <div>GPS devices list and parsed value</div>
     <div id="gps_device_parsed_array">GPS device parsed array</div>
     <!-- <div id="googleMap" style="width:100%;height:400px;"></div> -->
-
 
     <script src="js/timer.js"></script>
 
@@ -50,38 +53,7 @@
         })
     </script>
 
-    <script>
-        DEVICES_LIST_UPDATE_INTERVAL = 2000
-
-        function updateDevicesList() {
-            while (current_gps_data_array.length != 0) {
-                gps_element = current_gps_data_array.pop() // get last element
-                parsed_gps_element = JSON.parse(gps_element)
-                device_id = parsed_gps_element["device_id"]
-
-                if (!(device_id in latest_updated_gps_devices)) {
-                    latest_updated_gps_devices[device_id] = ""
-                    console.log(device_id + " not in the list")
-                }
-                else {
-                    console.log(device_id + " in the list")
-                }
-                // update value
-                latest_updated_gps_devices[device_id] = parsed_gps_element
-            }
-            // document.getElementById("gps_device_array").innerHTML = typeof (latest_updated_gps_devices) // object
-            // console.log(latest_updated_gps_devices)
-
-        }
-        setInterval(updateDevicesList, DEVICES_LIST_UPDATE_INTERVAL);
-
-        function printDevicesList() {
-            copied_dev_ls = Object.assign({}, latest_updated_gps_devices); // element parsed!
-            document.getElementById("gps_device_array").innerHTML = JSON.stringify(copied_dev_ls);
-        }
-        setInterval(printDevicesList, DEVICES_LIST_UPDATE_INTERVAL);
-
-    </script>
+    <script src="js/gps.js"></script>
 
     <!-- for GG Maps -->
     <!-- sommarive 5:   lat 46.06680624453603, long 11.150220098559688 -->
