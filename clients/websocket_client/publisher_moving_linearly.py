@@ -3,14 +3,32 @@ from random import uniform
 import time
 import json
 from datetime import datetime
+import numpy as np
 
 # Povo Sommarive 5 address: lat 46.06680624453603, long 11.150220098559688
 ORIGINAL_LATITUDE = 46.06680624453603
 ORIGINAL_LONGITUDE = 11.150220098559688
 
-NUM_OF_DRONES = 10
+NUM_OF_DRONES = 8
 DEVICE_TYPE = "DRONE"
 DEVICE_NAME = "DroneNo"
+
+
+NUM_OF_CIRCLE_POINTS = 150
+point_skip = int(NUM_OF_CIRCLE_POINTS / (NUM_OF_DRONES))
+
+RADIUS = 10
+theta = np.linspace(0, 2 * np.pi, NUM_OF_CIRCLE_POINTS)
+a1 = ORIGINAL_LATITUDE + RADIUS * np.cos(theta)
+b1 = ORIGINAL_LONGITUDE + RADIUS * np.sin(theta)
+starting_point = 1
+skip_point_list = []
+for i in range(0, NUM_OF_DRONES):
+    skip_point_list.append(starting_point)
+    starting_point += point_skip
+
+def calculate_slope(x1, y1, x2, y2):
+    return (float)(y2-y1)/(x2-x1)
 
 PUBLISH_TO_TOPIC = "unitn/compcomp/gps"
 BROKER_URL = "test.mosquitto.org"
@@ -32,9 +50,9 @@ for id in DEVICE_IDs:
     }
     DEVICES_LIST[id] = device
 
-def updateDevicePosition(id, lat, lon):
-    DEVICES_LIST[id]["gps_latitude"] += lat
-    DEVICES_LIST[id]["gps_longitude"] += lon
+def updateDevicePosition(id: str, lat: float, lon: float):
+    DEVICES_LIST[id]["gps_latitude"] = lat
+    DEVICES_LIST[id]["gps_longitude"] = lon
 
 
 def to_json_packet(device_id: str):
@@ -52,13 +70,30 @@ def to_json_packet(device_id: str):
     json_object = json.dumps(values_to_parse, indent = 4)
     return json_object
 
+skip = 0
 while True:
-    for id in DEVICE_IDs:
+    # for id in DEVICE_IDs:
+    for i in range(0, NUM_OF_DRONES):
+
+        x = a1[skip_point_list[i]]
+        y = b1[skip_point_list[i]]
+        slope = calculate_slope(ORIGINAL_LATITUDE, ORIGINAL_LONGITUDE, x, y)
+        print(f"x = {x}, y = {y}, s = {slope}")
+
+        device_id = DEVICE_IDs[i]
+        x0 = ORIGINAL_LATITUDE
+        y0 = ORIGINAL_LONGITUDE
+        
+        current_x = ORIGINAL_LATITUDE + skip
+        current_y = slope * (current_x - x0) + y0
+
         randLat = uniform(-1, 1)
         randLon = uniform(-1, 1)
-        updateDevicePosition(id, randLat, randLon)
-        json_obj = to_json_packet(id)
+        updateDevicePosition(DEVICE_IDs[i], current_x, current_y)
+        json_obj = to_json_packet(DEVICE_IDs[i])
         client.publish(PUBLISH_TO_TOPIC, json_obj)
         print(f"PUB: Just published {str(json_obj)} to topic {PUBLISH_TO_TOPIC}")
         time.sleep(0.1)
+
+    skip += 0.001
     time.sleep(3)
