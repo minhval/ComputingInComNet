@@ -4,12 +4,13 @@ import time
 import json
 from datetime import datetime
 import numpy as np
+import sys
 
 # Povo Sommarive 5 address: lat 46.06680624453603, long 11.150220098559688
 ORIGINAL_LATITUDE = 46.06680624453603
 ORIGINAL_LONGITUDE = 11.150220098559688
 
-NUM_OF_DRONES = 2
+NUM_OF_DRONES = int(sys.argv[1])
 DEVICE_TYPE = "CAR"
 DEVICE_NAME = "CarNo"
 
