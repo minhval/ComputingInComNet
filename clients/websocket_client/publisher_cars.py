@@ -9,9 +9,9 @@ import numpy as np
 ORIGINAL_LATITUDE = 46.06680624453603
 ORIGINAL_LONGITUDE = 11.150220098559688
 
-NUM_OF_DRONES = 8
-DEVICE_TYPE = "DRONE"
-DEVICE_NAME = "DroneNo"
+NUM_OF_DRONES = 2
+DEVICE_TYPE = "CAR"
+DEVICE_NAME = "CarNo"
 
 
 NUM_OF_CIRCLE_POINTS = 150
@@ -72,7 +72,8 @@ def to_json_packet(device_id: str):
 
 skip = 0
 SKIP_JUMP = 0.0001 # original
-SLEEP_TIME = 0.3 # second
+SKIP_JUMP = 0.05 # original
+SLEEP_TIME = 1 # second
 while True:
     # for id in DEVICE_IDs:
     for i in range(0, NUM_OF_DRONES):

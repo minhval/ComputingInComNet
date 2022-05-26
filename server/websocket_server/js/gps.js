@@ -1,4 +1,4 @@
-DEVICES_LIST_UPDATE_INTERVAL = 2000
+DEVICES_LIST_UPDATE_INTERVAL = 1000
 let BREAK_DOWN = "</br>"
 
 function updateDevicesList() {
@@ -32,6 +32,41 @@ function printParsedDevicesList() {
   id_list = Object.keys(copied_dev_ls)
 
   string_to_print = ""
+
+  var canvas = document.querySelector('#my-canvas');
+  var context = canvas.getContext('2d');
+  context.clearRect(0, 0, canvas.width, canvas.height); // clear the canvas
+
+  function drawPoint(context, x, y, label, color, size) {
+    if (color == null) {
+      color = '#000';
+    }
+    if (size == null) {
+      size = 5;
+    }
+
+    var radius = 0.5 * size;
+
+    // to increase smoothing for numbers with decimal part
+    var pointX = Math.round(x - radius);
+    var pointY = Math.round(y - radius);
+
+    context.beginPath();
+    context.fillStyle = color;
+    context.fillRect(pointX, pointY, size, size);
+    context.fill();
+
+    if (label) {
+      var textX = Math.round(x);
+      var textY = Math.round(pointY - 5);
+
+      context.font = 'Italic 14px Arial';
+      context.fillStyle = color;
+      context.textAlign = 'center';
+      context.fillText(label, textX, textY);
+    }
+  }
+
   while (id_list.length != 0) {
     id = id_list.pop()
     element = latest_updated_gps_devices[id]
@@ -44,6 +79,9 @@ function printParsedDevicesList() {
 
     string_to_print += BREAK_DOWN
     // string_to_print = string_to_print + JSON.stringify(element) + BREAK_DOWN + BREAK_DOWN
+
+    // draw a point on canvas
+    drawPoint(context, element["gps_latitude"], element["gps_longitude"], id, 'red', 3);
   }
   document.getElementById("gps_device_parsed_array").innerHTML = string_to_print
 }
