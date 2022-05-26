@@ -81,7 +81,7 @@ function printParsedDevicesList() {
     // string_to_print = string_to_print + JSON.stringify(element) + BREAK_DOWN + BREAK_DOWN
 
     // draw a point on canvas
-    drawPoint(context, element["gps_latitude"], element["gps_longitude"], id, 'red', 3);
+    drawPoint(context, 3* element["gps_latitude"], 3* element["gps_longitude"], id, 'red', 3);
   }
   document.getElementById("gps_device_parsed_array").innerHTML = string_to_print
 }
