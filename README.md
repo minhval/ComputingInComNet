@@ -20,7 +20,8 @@ The only thing to do is run index.html using a browser.
 3.2. Running the clients
 Run commands as follows:
 
-python3 publisher_moving_linearly.py 
+python3 publisher_moving_linearly.py
+
 python3 publisher_cars.py
 
 to publish GPS data to the MQTT broker.
