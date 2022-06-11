@@ -11,6 +11,8 @@ sudo docker tag TAG_ID minhval0307/unitn_mqtt_server
 sudo docker push minhval0307/unitn_mqtt_server
 
 ------------------------------------------------------------------------------
+sudo docker pull minhval0307/unitn_gpstracking_server:latest
+
 sudo docker run -it --rm -d -p 8080:80 --name web minhval0307/unitn_gpstracking_server
 
 on webbrowser access: http://localhost:8080/
