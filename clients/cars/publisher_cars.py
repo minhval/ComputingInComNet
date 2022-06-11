@@ -63,6 +63,8 @@ def publishing(num_of_cars: int):
 
     def to_json_packet(device_id: str):
         dt = str(datetime.now())
+        dt = datetime.strptime(dt , '%Y-%m-%d %H:%M:%S.%f')
+        dt = dt.strftime("%Y-%m-%d %H:%M:%S")
 
         device = DEVICES_LIST[device_id]
 
@@ -78,7 +80,7 @@ def publishing(num_of_cars: int):
 
     skip = 0
     SKIP_JUMP = 0.0001 # original
-    SKIP_JUMP = 0.05 # original
+    SKIP_JUMP = 0.00001 # original
     SLEEP_TIME = 1 # second
     while True:
         # for id in DEVICE_IDs:
@@ -96,8 +98,6 @@ def publishing(num_of_cars: int):
             current_x = ORIGINAL_LATITUDE + skip
             current_y = slope * (current_x - x0) + y0
 
-            randLat = uniform(-1, 1)
-            randLon = uniform(-1, 1)
             updateDevicePosition(DEVICE_IDs[i], current_x, current_y)
             json_obj = to_json_packet(DEVICE_IDs[i])
             client.publish(PUBLISH_TO_TOPIC, json_obj)

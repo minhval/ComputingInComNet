@@ -6,18 +6,18 @@ from datetime import datetime
 import numpy as np
 import sys, getopt
 
-DEFAULT_NUMBER_OF_CARS = 3
+DEFAULT_NUMBER_OF_DRONES = 9
 
-def publishing(num_of_cars: int):
+def publishing(num_of_drones: int):
 
     # Povo Sommarive 5 address: lat 46.06680624453603, long 11.150220098559688
     ORIGINAL_LATITUDE = 46.06680624453603
     ORIGINAL_LONGITUDE = 11.150220098559688
 
     # NUM_OF_DRONES = int(sys.argv[1])
-    NUM_OF_DRONES = num_of_cars
-    DEVICE_TYPE = "CAR"
-    DEVICE_NAME = "CarNo"
+    NUM_OF_DRONES = num_of_drones
+    DEVICE_TYPE = "DRONE"
+    DEVICE_NAME = "DroneNo"
 
 
     NUM_OF_CIRCLE_POINTS = 150
@@ -63,6 +63,8 @@ def publishing(num_of_cars: int):
 
     def to_json_packet(device_id: str):
         dt = str(datetime.now())
+        dt = datetime.strptime(dt , '%Y-%m-%d %H:%M:%S.%f')
+        dt = dt.strftime("%Y-%m-%d %H:%M:%S")
 
         device = DEVICES_LIST[device_id]
 
@@ -78,7 +80,7 @@ def publishing(num_of_cars: int):
 
     skip = 0
     SKIP_JUMP = 0.0001 # original
-    SKIP_JUMP = 0.05 # original
+    SKIP_JUMP = 0.0001 # original
     SLEEP_TIME = 1 # second
     while True:
         # for id in DEVICE_IDs:
@@ -108,23 +110,23 @@ def publishing(num_of_cars: int):
         time.sleep(SLEEP_TIME)
 
 def main(argv):
-   num_of_vehicle = DEFAULT_NUMBER_OF_CARS
+   num_of_vehicle = DEFAULT_NUMBER_OF_DRONES
    try:
       opts, args = getopt.getopt(argv,"hn:",["num="])
    except getopt.GetoptError:
-      print ('publisher_cars.py -n <numberofvehicles>')
-      print ('publisher_cars.py --num=numberofvehicles>')
+      print ('publisher_drones.py -n <numberofvehicles>')
+      print ('publisher_drones.py --num=<numberofvehicles>')
       sys.exit(2)
    for opt, arg in opts:
       if opt == '-h':
-            print ('publisher_cars.py -n <numberofvehicles>')
-            print ('publisher_cars.py --num=numberofvehicles>')
+            print ('publisher_drones.py -n <numberofvehicles>')
+            print ('publisher_drones.py --num=<numberofvehicles>')
             sys.exit()
       elif opt in ("-n", "--num"):
          num_of_vehicle = int(arg)
    return num_of_vehicle
 
 if __name__ == "__main__":
-   nCars = main(sys.argv[1:])
-   print ('Number of cars ', nCars)
-   publishing(nCars)
+   nDrones = main(sys.argv[1:])
+   print ('Number of drones ', nDrones)
+   publishing(nDrones)
