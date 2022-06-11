@@ -78,6 +78,16 @@ To run DRONES client, run the following commands:\\
 To stop CARS and DRONES clients, run:\\
 \textbf{docker stop cars drones}
 
+\section{Running directly with application files}
+Access \href{https://github.com/minhval/ComputingInComNet.git}{https://github.com/minhval/ComputingInComNet.git} to download the application source for both server and clients.\\~\\
+Inside folder server/src, run \textbf{index.html} (by double clicking on it) to start the tracking page.
+\\~\\
+Inside folder clients/cars, run command \textbf{python3 publisher\_cars.py} to start CARS client.
+\\~\\
+Inside folder clients/drones, run command \textbf{python3 publisher\_drones.py} to start DRONES client.
+\\~\\
+Note: packages \textbf{numpy} and \textbf{paho-mqtt} must be installed before starting the clients.
+
 \section{Images on the run}
 Here are several images presenting the result after running the sever and the clients.
 \begin{figure}[H]
