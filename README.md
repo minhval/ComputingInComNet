@@ -1,3 +1,3 @@
 # ComputingInComNet
 
-Please follow HowToRead.pdf.
+Please follow HowToRun.pdf.
