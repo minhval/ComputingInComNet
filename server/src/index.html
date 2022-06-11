@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GPS Tracker</title>
+</head>
+
+<body>
+    <div id="todaysDate">Time</div>
+
+    <div id="map" style="width: 700px; height: 450px"></div>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script>
+        const map = L.map('map').setView([46.06680624453603, 11.150220098559688], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            minZoom: 0,
+            maxZoom: 20,
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+
+        // DEVICE TYPES
+        let DTYPE_CAR = "CAR"
+        let DTYPE_DRONE = "DRONE"
+
+        function printMap() {
+            map.eachLayer(function (layer) {
+                if (!!layer.toGeoJSON) {
+                    map.removeLayer(layer);
+                }
+            });
+            let marker;
+            markerLayers = new L.layerGroup();
+
+            copied_dev_ls = Object.assign({}, latest_updated_gps_devices); // shallow copy - dictionary object
+            id_list = Object.keys(copied_dev_ls)
+            while (id_list.length != 0) {
+                id = id_list.pop()
+                element = latest_updated_gps_devices[id]
+                templat = element["gps_latitude"]
+                templon = element["gps_longitude"]
+                dtype = element["device_type"]
+                console.log(element["device_type"])
+                if (dtype == DTYPE_DRONE) {
+                    marker = new L.marker([templat, templon],
+                        {
+                            icon: new L.DivIcon({
+                                className: 'my-div-icon',
+                                html: '<img width="25" height="25" class="my-div-image" src="http://png-3.vector.me/files/images/4/0/402272/aiga_air_transportation_bg_thumb"/>' +
+                                    '<span class="my-div-span">' + id + '</span>'
+                            })
+                        }
+                    );
+                    markerLayers.addLayer(marker);
+                }
+                else if (dtype == DTYPE_CAR) {
+                    marker = new L.marker([templat, templon],
+                        {
+                            icon: new L.DivIcon({
+                                className: 'my-div-icon',
+                                html: '<img width="25" height="25" class="my-div-image" src="./car.png"/>' +
+                                    '<span class="my-div-span">' + id + '</span>'
+                            })
+                        }
+                    );
+                    markerLayers.addLayer(marker);
+                }
+                else 
+                {
+
+                }
+            }
+            map.addLayer(markerLayers);
+        }
+
+        setInterval(printMap, 1000);
+    </script>
+
+    </br>
+
+    <!-- <canvas id="my-canvas" width="600" height="450" style="border:1px solid #d3d3d3;">
+        Your browser does not support the canvas element.
+    </canvas>
+    </br></br> -->
+
+    <div>GPS devices table</div>
+    <div id="gps_devices_table">n/a</div>
+    </br>
+
+    <div>Latest GPS packet</div>
+    <div id="gpsdata">GPS data: n/a</div>
+    <!-- <div id="gps_device_id">GPS device id</div> -->
+    </br>
+    <div>GPS devices list and latest value</div>
+    <div id="gps_device_array">GPS device array</div>
+    </br>
+    <!-- <div>GPS devices list and parsed value</div>
+    <div id="gps_device_parsed_array">GPS device parsed array</div> -->
+    <!-- <div id="googleMap" style="width:100%;height:400px;"></div> -->
+
+    <script>
+        function doDate() {
+            var str = "";
+
+            var days = new Array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
+            var months = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+
+            var now = new Date();
+
+            str += "Current time: " + days[now.getDay()] + ", " + now.getDate() + " " + months[now.getMonth()] + " " + now.getFullYear() + " " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+            document.getElementById("todaysDate").innerHTML = str;
+
+            if (localStorage.getItem("data") !== null) {
+                var data = localStorage.getItem("data"); //get saved data anytime
+                document.getElementById("gpsdata").innerHTML = data;
+            }
+        }
+
+        setInterval(doDate, 1000);
+    </script>
+
+    <!-- for MQTT Socket Library -->
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
+    <script>
+        // For variables
+        var gpsdata
+        let current_gps_data_array = []
+        let latest_updated_gps_devices = {}
+
+    </script>
+    <script>
+        BROKER_URL = "ws://test.mosquitto.org:8080"
+        SUBSCRIBE_TOPIC = "unitn/compcomp/gps"
+        const client = mqtt.connect(BROKER_URL)
+        client.subscribe(SUBSCRIBE_TOPIC)
+
+        client.on("message", function (topic, message) {
+            document.getElementById("gpsdata").innerHTML = message;
+            // client.end()
+
+            current_gps_data_array.push(message) // push object to data array
+
+            gpsdata = JSON.parse(message) // --> print clearly in console
+            console.log(gpsdata)
+        })
+    </script>
+
+    <script>
+        DEVICES_LIST_UPDATE_INTERVAL = 1000
+        let BREAK_DOWN = "</br>"
+
+        function updateDevicesList() {
+            while (current_gps_data_array.length != 0) {
+                gps_element = current_gps_data_array.pop() // get last element
+                parsed_gps_element = JSON.parse(gps_element)
+                device_id = parsed_gps_element["device_id"]
+
+                if (!(device_id in latest_updated_gps_devices)) {
+                    latest_updated_gps_devices[device_id] = ""
+                    console.log(device_id + " not in the list")
+                }
+                else {
+                    console.log(device_id + " in the list")
+                }
+                // update value
+                latest_updated_gps_devices[device_id] = parsed_gps_element
+            }
+        }
+        setInterval(updateDevicesList, DEVICES_LIST_UPDATE_INTERVAL);
+
+        function printDevicesList() {
+            copied_dev_ls = Object.assign({}, latest_updated_gps_devices); // shallow copy
+            document.getElementById("gps_device_array").innerHTML = JSON.stringify(copied_dev_ls);
+        }
+        setInterval(printDevicesList, DEVICES_LIST_UPDATE_INTERVAL);
+
+        function printParsedDevicesList() {
+            copied_dev_ls = Object.assign({}, latest_updated_gps_devices); // shallow copy - dictionary object
+
+            id_list = Object.keys(copied_dev_ls)
+
+            string_to_print = ""
+
+            // var canvas = document.querySelector('#my-canvas');
+            // var context = canvas.getContext('2d');
+            // context.clearRect(0, 0, canvas.width, canvas.height); // clear the canvas
+
+            // function drawPoint(context, x, y, label, color, size) {
+            //     if (color == null) {
+            //         color = '#000';
+            //     }
+            //     if (size == null) {
+            //         size = 5;
+            //     }
+
+            //     var radius = 0.5 * size;
+
+            //     // to increase smoothing for numbers with decimal part
+            //     var pointX = Math.round(x - radius);
+            //     var pointY = Math.round(y - radius);
+
+            //     context.beginPath();
+            //     context.fillStyle = color;
+            //     context.fillRect(pointX, pointY, size, size);
+            //     context.fill();
+
+            //     if (label) {
+            //         var textX = Math.round(x);
+            //         var textY = Math.round(pointY - 5);
+
+            //         context.font = 'Italic 14px Arial';
+            //         context.fillStyle = color;
+            //         context.textAlign = 'center';
+            //         context.fillText(label, textX, textY);
+            //     }
+            // }
+
+            // while (id_list.length != 0) {
+            //     id = id_list.pop()
+            //     element = latest_updated_gps_devices[id]
+
+            //     string_to_print += JSON.stringify(id) + BREAK_DOWN
+            //     string_to_print += element["device_type"] + BREAK_DOWN
+            //     string_to_print += element["datetime"] + BREAK_DOWN
+            //     string_to_print += element["gps_latitude"] + BREAK_DOWN
+            //     string_to_print += element["gps_longitude"] + BREAK_DOWN
+
+            //     string_to_print += BREAK_DOWN
+            // string_to_print = string_to_print + JSON.stringify(element) + BREAK_DOWN + BREAK_DOWN
+            // let MULTIPLIER = 3
+            // draw a point on canvas
+            // drawPoint(context, MULTIPLIER * element["gps_latitude"], MULTIPLIER * element["gps_longitude"], id, 'red', 3);
+            // }
+            // document.getElementById("gps_device_parsed_array").innerHTML = string_to_print
+        }
+        setInterval(printParsedDevicesList, DEVICES_LIST_UPDATE_INTERVAL);
+
+        function printParsedDevicesListInTable() {
+            copied_dev_ls = Object.assign({}, latest_updated_gps_devices); // shallow copy - dictionary object
+
+            id_list = Object.keys(copied_dev_ls)
+
+            var result = "<table border=1>";
+            result += "<tr>";
+            result += "<td width='100'>" + "Device ID" + "</td>";
+            result += "<td width='100'>" + "Device Type" + "</td>";
+            result += "<td width='150'>" + "Latitude" + "</td>";
+            result += "<td width='150'>" + "Longitude" + "</td>";
+            result += "<td width='150'>" + "Last Update" + "</td>";
+            result += "</tr>";
+            while (id_list.length != 0) {
+                id = id_list.pop()
+                element = latest_updated_gps_devices[id]
+
+                string_to_print += JSON.stringify(id) + BREAK_DOWN
+                string_to_print += element["device_type"] + BREAK_DOWN
+                string_to_print += element["datetime"] + BREAK_DOWN
+                string_to_print += element["gps_latitude"] + BREAK_DOWN
+                string_to_print += element["gps_longitude"] + BREAK_DOWN
+                string_to_print += BREAK_DOWN
+
+                result += "<tr>";
+                result += "<td width='100'>" + id + "</td>";
+                result += "<td width='100'>" + element["device_type"] + "</td>";
+                result += "<td width='150'>" + element["gps_latitude"] + "</td>";
+                result += "<td width='150'>" + element["gps_longitude"] + "</td>";
+                result += "<td width='150'>" + element["datetime"] + "</td>";
+                result += "</tr>";
+            }
+            result += "</table>";
+            document.getElementById('gps_devices_table').innerHTML = result
+        }
+        setInterval(printParsedDevicesListInTable, DEVICES_LIST_UPDATE_INTERVAL);
+    </script>
+
+</body>
+
+</html>
