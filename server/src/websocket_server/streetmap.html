@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>OSM and Leaflet</title>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+</head>
+
+<body>
+    <div id="map" style="width: 900px; height: 580px"></div>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script>
+        print_count = 0
+        const map = L.map('map').setView([46.231226, 6.051737], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            minZoom: 0,
+            maxZoom: 20,
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        function printMap() {
+            map.eachLayer(function (layer) {
+                if (!!layer.toGeoJSON) {
+                    map.removeLayer(layer);
+                }
+            });
+            // let drone1 = "Drone1"
+
+            // const leafletMarkers = L.layerGroup([
+            //     new L.marker([46.233226, 6.055737]),
+            //     new L.marker([46.2278, 6.0510]),
+            //     new L.marker([46.23336, 6.0471]),
+            //     new L.marker([46.236667, 6.045], {
+            //         icon: new L.DivIcon({
+            //             className: 'my-div-icon',
+            //             html: '<img width="25" height="25" class="my-div-image" src="http://png-3.vector.me/files/images/4/0/402272/aiga_air_transportation_bg_thumb"/>' +
+            //                 '<span class="my-div-span">' + drone1 + '</span>'
+            //         })
+            //     })
+            // ]);
+            // leafletMarkers.addTo(map);
+
+            let marker;
+            markerLayers = [];
+            lat = 46.233226 + print_count
+            lon = 6.055737 + print_count
+            //for every type
+            for (let i = 0; i < 3; i++) {
+                markerLayers[i] = new L.layerGroup();
+
+                //for every place of the specific type
+                for (let j = 0; j < 3; j++) {
+                    templat = lat + i / 100;
+                    templon = lon + j / 100
+                    marker = new L.marker([templat, templon],
+                        {
+                            icon: new L.DivIcon({
+                                className: 'my-div-icon',
+                                html: '<img width="25" height="25" class="my-div-image" src="http://png-3.vector.me/files/images/4/0/402272/aiga_air_transportation_bg_thumb"/>' +
+                                    '<span class="my-div-span">' + templat.toString() + "_" + templon.toString() + '</span>'
+                            })
+                        }
+                    );
+                    markerLayers[i].addLayer(marker);
+                }
+                map.addLayer(markerLayers[i]);
+            }
+            print_count += 0.001
+        }
+        setInterval(printMap, 1000);
+    </script>
+</body>
+
+</html>
