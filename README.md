@@ -11,6 +11,7 @@ Pull the docker server by the command:
 
 Then run the command:
 **docker run -it --rm -d -p 8080:80 --name web minhval0307/unitn gpstracking server**
+
 On a web browser, access: **http://localhost:8080/**
 
 To stop the container, run: **docker stop web**
