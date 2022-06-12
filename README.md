@@ -30,10 +30,7 @@ To run DRONES client, run the following commands:
 
 **docker run -it --rm --name drones minhval0307/publisher drones**
 
-To stop CARS and DRONES clients, run:
-
-**docker stop cars drones**
-
+To stop CARS and DRONES clients, run: **docker stop cars drones**
 
 2 Running directly with application files
 
