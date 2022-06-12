@@ -3,24 +3,23 @@
 Please follow HowToRun.pdf or the following guide.
 
 1 Running with docker
+
 1.1 Running the server
+
 Pull the docker server by the command:
 **docker pull minhval0307/unitn gpstracking server:latest**
 
 Then run the command:
 **docker run -it –rm -d -p 8080:80 –name web minhval0307/unitn gpstracking server**
-
 On a web browser, access: **http://localhost:8080/**
 
-To stop the container, run: docker stop web
+To stop the container, run: **docker stop web**
 
 1.2 Running the clients
 There are two kinds of clients, say CARS and DRONES.
 
 To run CARS client, run the following commands:
-
 **docker pull minhval0307/publisher cars:latest**
-
 **docker run -it –rm –name cars minhval0307/publisher cars**
 
 To run DRONES client, run the following commands:
