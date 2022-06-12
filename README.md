@@ -17,6 +17,7 @@ On a web browser, access: **http://localhost:8080/**
 To stop the container, run: **docker stop web**
 
 1.2 Running the clients
+
 There are two kinds of clients, say CARS and DRONES.
 
 To run CARS client, run the following commands:
