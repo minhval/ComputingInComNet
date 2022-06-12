@@ -22,6 +22,7 @@ There are two kinds of clients, say CARS and DRONES.
 
 To run CARS client, run the following commands:
 **docker pull minhval0307/publisher cars:latest**
+
 **docker run -it --rm --name cars minhval0307/publisher cars**
 
 To run DRONES client, run the following commands:
