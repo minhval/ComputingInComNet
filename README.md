@@ -41,8 +41,8 @@ server and clients.
 
 Inside folder server/src, run **index.html** (by double clicking on it) to start the tracking page.
 
-Inside folder clients/cars, run command **python3 publisher cars.py to start CARS client**.
+Inside folder clients/cars, run command **python3 publisher_cars.py** to start CARS client.
 
-Inside folder clients/drones, run command **python3 publisher drones.py to start DRONES client**.
+Inside folder clients/drones, run command **python3 publisher_drones.py** to start DRONES client.
 
 Note: packages **numpy** and **paho-mqtt** must be installed before starting the clients.
