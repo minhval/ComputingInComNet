@@ -7,10 +7,10 @@ Please follow HowToRun.pdf or the following guide.
 1.1 Running the server
 
 Pull the docker server by the command:
-**docker pull minhval0307/unitn gpstracking server:latest**
+**docker pull minhval0307/unitn_gpstracking_server:latest**
 
 Then run the command:
-**docker run -it --rm -d -p 8080:80 --name web minhval0307/unitn gpstracking server**
+**docker run -it --rm -d -p 8080:80 --name web minhval0307/unitn_gpstracking_server**
 
 On a web browser, access: **http://localhost:8080/**
 
@@ -22,15 +22,15 @@ There are two kinds of clients, say CARS and DRONES.
 
 To run CARS client, run the following commands:
 
-**docker pull minhval0307/publisher cars:latest**
+**docker pull minhval0307/publisher_cars:latest**
 
-**docker run -it --rm --name cars minhval0307/publisher cars**
+**docker run -it --rm --name cars minhval0307/publisher_cars**
 
 To run DRONES client, run the following commands:
 
-**docker pull minhval0307/publisher drones:latest**
+**docker pull minhval0307/publisher_drones:latest**
 
-**docker run -it --rm --name drones minhval0307/publisher drones**
+**docker run -it --rm --name drones minhval0307/publisher_drones**
 
 To stop CARS and DRONES clients, run: **docker stop cars drones**
 
